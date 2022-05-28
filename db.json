@@ -1,0 +1,49 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "new",
+      "status": false
+    },
+    {
+      "title": "Buy Bread",
+      "status": false,
+      "id": 2
+    },
+    {
+      "title": "Buy Milk",
+      "status": true,
+      "id": 3
+    },
+    {
+      "title": "Study",
+      "status": false,
+      "id": 4
+    },
+    {
+      "title": "Groceries",
+      "status": true,
+      "id": 5
+    },
+    {
+      "title": "buy snacks",
+      "status": false,
+      "id": 6
+    },
+    {
+      "title": "buy shoes",
+      "status": true,
+      "id": 7
+    },
+    {
+      "title": "run",
+      "status": true,
+      "id": 9
+    },
+    {
+      "title": "Call",
+      "status": true,
+      "id": 10
+    }
+  ]
+}

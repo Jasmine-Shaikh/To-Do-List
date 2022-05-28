@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do List</title>
+</head>
+<style>
+    #mainContent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 80px 30%;
+        padding: 30px;
+        border: 1px solid rgba(128, 128, 128, 0.781);
+    }
+    
+    input {
+        height: 20px;
+    }
+    
+    #toDoList>div {
+        padding: 5px;
+        margin: 5px;
+        font-size: 20px;
+        border: 1px solid black;
+        text-align: center;
+        width: 400px;
+    }
+    
+    button {
+        margin: 20px;
+        border-radius: 0%;
+        background-color: black;
+        color: white;
+        width: 100px;
+    }
+</style>
+
+<body>
+    <div id="mainContent">
+        <div>
+            <input type="text" placeholder="Write new task here" id="newTask">
+            <input type="checkbox" id="checkBox">
+        </div>
+        <button id="addNewTask">ADD</button>
+
+        <div id="toDoList">
+
+        </div>
+
+
+    </div>
+</body>
+
+</html>
+
+<script>
+    document.querySelector('#addNewTask').addEventListener('click', function() {
+        event.preventDefault();
+
+        let title = document.getElementById('newTask').value;
+        let status = document.getElementById('checkBox').checked;
+
+        let newTaskDetails = {
+            title,
+            status
+        }
+
+        postNewTask(newTaskDetails)
+    })
+
+    async function postNewTask(newTaskDetails) {
+        try {
+
+            let post = await fetch(`http://localhost:3000/tasks`, {
+                method: "POST",
+                body: JSON.stringify(newTaskDetails),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            let response = await post.json();
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async function showAllTask() {
+        try {
+
+            let res = await fetch(`http://localhost:3000/tasks`);
+            let data = await res.json();
+
+
+            data.forEach((e) => {
+
+                let id = e.id;
+                let taskDiv = document.createElement('div');
+                taskDiv.innerHTML = e.title;
+
+                if (e.status) {
+                    taskDiv.setAttribute("style", "color:green")
+                } else {
+                    taskDiv.setAttribute("style", "color:red")
+                }
+
+                let deleteBtn = document.createElement('button');
+                deleteBtn.setAttribute('class', 'delBtn')
+                deleteBtn.innerText = "DELETE"
+                deleteBtn.onclick = async function() {
+
+                    try {
+                        let response = await fetch(`http://localhost:3000/tasks/${id}`, {
+                            method: "DELETE"
+                        })
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+
+                let editBtn = document.createElement('button');
+                editBtn.setAttribute('class', 'editBtn')
+                editBtn.innerText = "EDIT"
+                editBtn.onclick = async function() {
+
+                    try {
+                        let response = await fetch(`http://localhost:3000/tasks/${id}`)
+                        let data = response.json();
+
+                        localStorage.setItem("userToEdit", JSON.stringify(id))
+
+                        window.location.href = "./edit.html"
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+
+                taskDiv.append(deleteBtn, editBtn)
+                document.getElementById('toDoList').append(taskDiv);
+
+            });
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    showAllTask()
+</script>

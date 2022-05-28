@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Page</title>
+</head>
+<style>
+    #mainContent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 80px 30%;
+        padding: 30px;
+        border: 1px solid rgba(128, 128, 128, 0.781);
+    }
+    
+    input {
+        height: 20px;
+    }
+    
+    button {
+        margin: 20px;
+        border-radius: 0%;
+        background-color: black;
+        color: white;
+        width: 250px;
+    }
+</style>
+
+<body>
+
+    <div id="mainContent">
+        <h3>EDIT LIST</h3>
+        <div> <input id="taskName" type="text" placeholder="Change task here">
+            <input id="taskStatus" type="checkbox"></div>
+
+
+        <button>UPDATE CHANGES</button>
+
+    </div>
+
+</body>
+
+</html>
+
+<script>
+    let userId = localStorage.getItem('userToEdit');
+
+    async function getPrevData() {
+        try {
+            let res = await fetch(`http://localhost:3000/tasks/${userId}`)
+            let data = await res.json();
+
+            data.title = document.getElementById('taskName').value;
+            data.status = document.getElementById('taskName').checked;
+
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    getPrevData();
+
+    function newData() {
+
+        let newTask = document.getElementById('taskName').value;
+        let newStatus = document.getElementById('taskName').checked;
+
+        let newDetails = {
+            title: newTask,
+            status: newStatus
+        }
+
+        updateChanges(newDetails)
+
+    }
+
+    newData()
+    async function updateChanges(e) {
+
+        try {
+
+            let changes = await fetch(`http://localhost:3000/tasks/${userId}`, {
+                method: 'PATCH',
+                body: JSON.stringify(e),
+                headers: {
+                    "Content:Type": "application/json"
+                }
+            });
+            window.location.href = './index.html'
+        } catch (error) {
+            console.log(error)
+        }
+    }
+</script>
